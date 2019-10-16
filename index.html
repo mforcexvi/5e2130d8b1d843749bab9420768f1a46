@@ -1,3 +1,13 @@
+<!--
+Categories:
+0: Sanguine
+1: Cynical
+2: Dismissive
+3: Reliant
+4: Compliant
+5: Shared Responsibility
+ -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,8 +35,78 @@
   <script src="sweet-alert.js"></script>
   <script src="quiz.js"></script>
   <script>
+  var quiz_object =
+  {
+    "questions": [
+      {
+        "answers": [
+          "Cynical Response",
+          "Reliant Response"
+        ],
+        "correct": {
+          "index": 0,
+        },
+        "category": [1, 3],
+        "number": 1,
+        "prompt": "Choose the statement that best describes your views"
+      },
+      {
+        "answers": [
+          "Shared Responsiblity Response",
+          "Sanguine Response"
+        ],
+        "correct": {
+          "index": 0
+        },
+        "category": [5, 0],
+        "number": 2,
+        "prompt": "Choose the statement that best describes your views"
+      },
+      {
+        "answers": [
+          "Compliant Response",
+          "Dismissive Response"
+        ],
+        "correct": {
+          "index": 1
+        },
+        "category": [4, 2],
+        "number": 3,
+        "prompt": "Choose the statement that best describes your views"
+      },
+      {
+        "answers": [
+          "Compliant Response",
+          "Dismissive Response"
+        ],
+        "correct": {
+          "index": 1
+        },
+        "category": [4, 2],
+        "number": 3,
+        "prompt": "Choose the statement that best describes your views"
+      },
+      {
+        "answers": [
+          "Compliant Response",
+          "Dismissive Response"
+        ],
+        "correct": {
+          "index": 1
+        },
+        "category": [4, 2],
+        "number": 3,
+        "prompt": "Choose the statement that best describes your views"
+      }
+    ],
+    "title": "What is your Safety Narrative?",
+    "url": "http://urbaninstitute.github.io/quick-quiz/"
+  }
+
+
+
     $(function() {
-      $('#quiz').quiz("unicorns.json");
+      $('#quiz').quiz(quiz_object);
     });
   </script>
 </body>

@@ -35,6 +35,8 @@ function render(quiz_opts) {
     total : questions.length
   };
 
+  var category_scores = [0, 0, 0, 0, 0, 0];
+
   var $quiz = $(this)
     .attr("class", "carousel slide")
     .attr("data-ride", "carousel");
@@ -160,6 +162,15 @@ var $indicators = $('<ol>')
       // This question is correct if it's
       // index is the correct index
       var correct = (question.correct.index === answer_index);
+      console.log(correct)
+
+      // Get info on which of the six narratives the current answer is
+      console.log(question.category[answer_index])
+      var answer_category = question.category[answer_index]
+      // console.log(question.category)
+      // var category_index = question.category[answer_index];
+      // category_scores[answer_index] += 1;
+      // console.log(category_scores)
 
       // default opts for both outcomes
       var opts = {
@@ -167,38 +178,40 @@ var $indicators = $('<ol>')
         allowEscapeKey : false,
         confirmButtonText: "Next Question",
         html : true,
-        confirmButtonColor: "#0096D2"
+        confirmButtonColor: "#0096D2",
+        title: "Response Recorded",
+        type: "success"
       };
 
       // set options for correct/incorrect
       // answer dialogue
-      if (correct) {
-        opts = $.extend(opts, {
-          title: "Nice!",
-          text: "Well done" + (
-            question.correct.text ?
-            ("<div class=\"correct-text\">" +
-              question.correct.text +
-              "</div>"
-            ) : ""),
-          type: "success"
-        });
-      } else {
-        opts = $.extend(opts, {
-          title: "Drat",
-          text: (
-            "Nope, not quite right!<br/><br/>" +
-            "The correct answer was \"" +
-            question.answers[question.correct.index] + "\"." + (
-            question.correct.text ?
-            ("<div class=\"correct-text\">" +
-              question.correct.text +
-              "</div>"
-            ) : "")
-            ),
-          type: "error"
-        });
-      }
+      // if (correct) {
+      //   opts = $.extend(opts, {
+      //     title: "Nice!",
+      //     text: "Well done" + (
+      //       question.correct.text ?
+      //       ("<div class=\"correct-text\">" +
+      //         question.correct.text +
+      //         "</div>"
+      //       ) : ""),
+      //     type: "success"
+      //   });
+      // } else {
+      //   opts = $.extend(opts, {
+      //     title: "Drat",
+      //     text: (
+      //       "Nope, not quite right!<br/><br/>" +
+      //       "The correct answer was \"" +
+      //       question.answers[question.correct.index] + "\"." + (
+      //       question.correct.text ?
+      //       ("<div class=\"correct-text\">" +
+      //         question.correct.text +
+      //         "</div>"
+      //       ) : "")
+      //       ),
+      //     type: "error"
+      //   });
+      // }
 
       if (last_question) {
         opts.confirmButtonText = "See your results";
@@ -212,12 +225,17 @@ var $indicators = $('<ol>')
           // if correct answer is selected,
           // keep track in total
           if (correct) state.correct++;
+
+          // Add one point to category of narrative user selected
+          category_scores[answer_category]++;
+          console.log(category_scores)
+
           $quiz.carousel('next');
 
           // if we've reached the final question
           // set the results text
           if (last_question) {
-            $results_title.html(resultsText(state));
+            $results_title.html(safetyNarrativeText(category_scores));
             $results_ratio.text(
               "You got " +
               Math.round(100*(state.correct/state.total)) +
@@ -306,6 +324,34 @@ var $indicators = $('<ol>')
 
 }
 
+// Utility Function
+function indexOfMax(arr) {
+    if (arr.length === 0) {
+        return -1;
+    }
+
+    var max = arr[0];
+    var maxIndex = 0;
+
+    for (var i = 1; i < arr.length; i++) {
+        if (arr[i] > max) {
+            maxIndex = i;
+            max = arr[i];
+        }
+    }
+
+    return maxIndex;
+}
+
+function safetyNarrativeText(category_scores) {
+  var narrative_mapping = ["Sanguine", "Cynical", "Dismissive", "Reliant", "Compliant", "Shared Responsibility"];
+  var max_index = indexOfMax(category_scores);
+
+  var text = "Your safety narrative type is " + narrative_mapping[max_index] + "!";
+
+  return text
+}
+
 function resultsText(state) {
 
   var ratio = state.correct / state.total;
@@ -358,4 +404,3 @@ function facebook(state, opts) {
 
 
 })(jQuery);
-
