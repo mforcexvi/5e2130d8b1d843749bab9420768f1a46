@@ -387,7 +387,7 @@ function indexOfMax(arr) {
 }
 
 function safetyNarrativeText(category_scores, elo_scores) {
-  var narrative_expression_mapping = ["\"Like like lor, what to do...\"", "\"Don’t wayang lah\"", "\"All this safety stuff sibei sian\"", "\"You say what, I do what\"", "\"Safety regulations got say?\"", "\"Ownself check Ownself\""];
+  var narrative_expression_mapping = ["\"Like that lor, what to do...\"", "\"Don’t wayang lah\"", "\"The more garang, the better!\"", "\"You say what, I do what\"", "\"Safety regulations got say?\"", "\"Ownself check Ownself\""];
   var max_index = indexOfMax(elo_scores);
 
   var text = narrative_expression_mapping[max_index];
