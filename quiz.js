@@ -2,6 +2,22 @@
   Quick quiz bootstrap extension
 */
 
+// Elo calculation code from https://github.com/moroshko/elo.js
+
+function getEloRatingDelta(myRating, opponentRating, myGameResult) {
+  if ([0, 0.5, 1].indexOf(myGameResult) === -1) {
+    return null;
+  }
+
+  var myChanceToWin = 1 / ( 1 + Math.pow(10, (opponentRating - myRating) / 400));
+
+  return Math.round(32 * (myGameResult - myChanceToWin));
+}
+
+function getEloNewRating(myRating, opponentRating, myGameResult) {
+  return myRating + getEloRatingDelta(myRating, opponentRating, myGameResult);
+}
+
 
 ;(function($) {
 
@@ -36,6 +52,7 @@ function render(quiz_opts) {
   };
 
   var category_scores = [0, 0, 0, 0, 0, 0];
+  var elo_scores = [1200, 1200, 1200, 1200, 1200, 1200]
 
   var $quiz = $(this)
     .attr("class", "carousel slide")
@@ -164,9 +181,23 @@ var $indicators = $('<ol>')
       var correct = (question.correct.index === answer_index);
       console.log(correct)
 
+      // Index of answer user did not select
+      var non_answer_index;
+      if (answer_index == 0){
+        non_answer_index = 1;
+      } else {
+        non_answer_index = 0;
+      }
+
       // Get info on which of the six narratives the current answer is
       console.log(question.category[answer_index])
       var answer_category = question.category[answer_index]
+      var non_answer_category = question.category[non_answer_index]
+
+
+      var winning_category = question.category[answer_index]
+      var losing_category = question.category[non_answer_index]
+
       // console.log(question.category)
       // var category_index = question.category[answer_index];
       // category_scores[answer_index] += 1;
@@ -228,14 +259,25 @@ var $indicators = $('<ol>')
 
           // Add one point to category of narrative user selected
           category_scores[answer_category]++;
-          console.log(category_scores)
+          console.log(category_scores);
+
+          winner_initial_elo = elo_scores[answer_category];
+          loser_initial_elo = elo_scores[non_answer_category];
+
+          winner_new_elo = getEloNewRating(winner_initial_elo, loser_initial_elo, 1);
+          loser_new_elo = getEloNewRating(loser_initial_elo, winner_initial_elo, 0);
+
+          elo_scores[answer_category] = winner_new_elo;
+          elo_scores[non_answer_category] = loser_new_elo;
+
+          console.log(elo_scores)
 
           $quiz.carousel('next');
 
           // if we've reached the final question
           // set the results text
           if (last_question) {
-            $results_title.html(safetyNarrativeText(category_scores));
+            $results_title.html(safetyNarrativeText(category_scores, elo_scores));
             $results_ratio.text(
               "You got " +
               Math.round(100*(state.correct/state.total)) +
@@ -343,11 +385,11 @@ function indexOfMax(arr) {
     return maxIndex;
 }
 
-function safetyNarrativeText(category_scores) {
-  var narrative_mapping = ["Sanguine", "Cynical", "Dismissive", "Reliant", "Compliant", "Shared Responsibility"];
-  var max_index = indexOfMax(category_scores);
+function safetyNarrativeText(category_scores, elo_scores) {
+  var narrative_mapping = ["Resignation", "Cynicism", "Dismissiveness", "Reliance", "Compliance", "Shared Responsibility"];
+  var max_index = indexOfMax(elo_scores);
 
-  var text = "Your safety narrative type is " + narrative_mapping[max_index] + "!";
+  var text = "Your safety attitude is " + narrative_mapping[max_index] + "!";
 
   return text
 }
