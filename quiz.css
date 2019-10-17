@@ -16,7 +16,7 @@ html, body {
 
 .quiz-answers {
   text-align: center;
-  width: 250px;
+  width: 350px;
   margin: 0 auto;
   display: block;
   padding-bottom: 5px;
@@ -37,8 +37,8 @@ html, body {
   border-radius: 0;
   /* text-transform: uppercase; */
   white-space: normal !important;
-  max-width: 250px;
-  width: 250px;
+  max-width: 350px;
+  width: 350px;
   font-size: 18px;
   /* text-align: left; */
 }
