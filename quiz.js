@@ -278,11 +278,12 @@ var $indicators = $('<ol>')
           // set the results text
           if (last_question) {
             $results_title.html(safetyNarrativeText(category_scores, elo_scores));
-            $results_ratio.text(
-              "You got " +
-              Math.round(100*(state.correct/state.total)) +
-              "% of the questions correct!"
-            );
+            $results_ratio.text(safetyNarrativeDescription(elo_scores));
+            // $results_ratio.text(
+            //   "You got " +
+            //   Math.round(100*(state.correct/state.total)) +
+            //   "% of the questions correct!"
+            // );
             $twitter_link.attr('href', tweet(state, quiz_opts));
             $facebook_link.attr('href', facebook(state, quiz_opts));
             $indicators.removeClass('show');
@@ -386,10 +387,24 @@ function indexOfMax(arr) {
 }
 
 function safetyNarrativeText(category_scores, elo_scores) {
-  var narrative_mapping = ["Resignation", "Cynicism", "Dismissiveness", "Reliance", "Compliance", "Shared Responsibility"];
+  var narrative_expression_mapping = ["\"Like like lor, what to do...\"", "\"Don’t wayang lah\"", "\"All this safety stuff sibei sian\"", "\"You say what, I do what\"", "\"Safety regulations got say?\"", "\"Ownself check Ownself\""];
   var max_index = indexOfMax(elo_scores);
 
-  var text = "Your safety attitude is " + narrative_mapping[max_index] + "!";
+  var text = narrative_expression_mapping[max_index];
+
+  return text
+}
+
+function safetyNarrativeDescription(elo_scores) {
+  var narrative_description_mapping = ["Your safety attitude is Resignation. You may believe that some accidents are unavoidable no matter how much focus we place on safety.",
+  "Your safety attitude is Cynicism. You may believe that the SAF's focus on safety is not sincere, and so nothing will actually change.",
+  "Your safety attitude is Dismissiveness. You may believe that there are already too many safety procedures, and that the focus on safety reducing our ability to train effectively.",
+  "Your safety attitude is Command Responsibility. You may believe that the most important element in safety is the role played by commanders, and that safety can be improved if commanders are more safety conscious and put in more effort to ensure that training is conducted safely.",
+  "Your safety attitude is Compliance. You may believe that the most important element in safety is having the right rules, regulations and procedures in place; as long as these rules are properly followed, we should be able to train safely.",
+  "Your safety attitude is Shared Responsbility. You may believe that everyone has an essential and indispensable role to play in safety, and that everyone, especially the men on the ground, must step up and take individual responsibility for the safety of themselves and those around them."];
+  var max_index = indexOfMax(elo_scores);
+
+  var text = narrative_description_mapping[max_index];
 
   return text
 }
